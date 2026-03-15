@@ -51,9 +51,13 @@ Edit `shiny_iv_boost_config.rb` in `patch/Mods/` — the mod file itself never n
 | `ENABLED` | `true` | Master toggle for the entire mod |
 | `ADVANTAGE_ROLLS` | `true` | Roll each IV twice, keep the higher |
 | `MIN_IV_FLOOR` | `5` | Reroll any IV at or below this value (set to `0` to disable) |
-| `DEBUG_LOGGING` | `false` | Print shiny IV results to the console |
+| `DEBUG_LOGGING` | `false` | Log shiny IV results to `shiny_iv_boost.log` |
 
-To see debug output in-game, press **F1** and check **Show Console**.
+When `DEBUG_LOGGING` is enabled, each shiny generation writes a line to `shiny_iv_boost.log` in your game folder showing the before/after IVs:
+
+```
+[2026-03-15 14:02:31] Pikachu — before: [4, 12, 28, 3, 17, 9] → after: [22, 18, 28, 14, 24, 15]
+```
 
 If the config file is missing, the mod still works using built-in defaults (same values as above).
 

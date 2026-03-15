@@ -21,11 +21,20 @@ module ShinyIVBoost
   MIN_IV_FLOOR     = 5     unless defined?(MIN_IV_FLOOR)
   DEBUG_LOGGING    = false unless defined?(DEBUG_LOGGING)
 
+  LOG_FILE = "shiny_iv_boost.log"
+
+  def self.log(message)
+    return unless DEBUG_LOGGING
+    File.open(LOG_FILE, "a") { |f| f.puts("[#{Time.now}] #{message}") }
+  end
+
   def self.apply(pokemon)
     return unless ENABLED
     return unless pokemon.isShiny?
     # Let game switches take full priority
     return if $game_switches && ($game_switches[:Full_IVs] || $game_switches[:Empty_IVs_Password])
+
+    original_ivs = pokemon.iv.dup
 
     for i in 0..5
       # Advantage roll: roll again, keep the higher value
@@ -39,9 +48,7 @@ module ShinyIVBoost
       end
     end
 
-    if DEBUG_LOGGING
-      puts "[SHINY IV BOOST] #{pokemon.name} IVs: #{pokemon.iv.inspect}"
-    end
+    log("#{pokemon.name} — before: #{original_ivs.inspect} → after: #{pokemon.iv.inspect}")
   end
 end
 
