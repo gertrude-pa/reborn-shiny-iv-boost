@@ -48,7 +48,7 @@ module ShinyIVBoost
       end
     end
 
-    log("#{pokemon.name} — before: #{original_ivs.inspect} → after: #{pokemon.iv.inspect}")
+    log("#{pokemon.species} — before: #{original_ivs.inspect} → after: #{pokemon.iv.inspect}")
   end
 end
 
