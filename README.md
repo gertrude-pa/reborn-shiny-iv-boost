@@ -13,7 +13,7 @@ Non-shiny Pokemon are completely unaffected. Game switches like `Full_IVs` and `
 
 ## Install — Pokemon Reborn (v19.5.0)
 
-Reborn has built-in mod support. Just drop in the files:
+Reborn has built-in mod support via its `patch/Mods/` system. Just drop in the files:
 
 1. Navigate to your Pokemon Reborn game folder
 2. Create the directory `patch/Mods/` if it doesn't already exist
@@ -24,27 +24,32 @@ Reborn has built-in mod support. Just drop in the files:
 
 ## Install — Pokemon Rejuvenation (v13.5.0)
 
-Rejuvenation uses the same engine but doesn't enable mod loading by default. One extra step:
+Rejuvenation uses its own script loader instead of Reborn's `patch/Mods/` system, so the install is slightly different:
 
 1. Navigate to your Pokemon Rejuvenation game folder
-2. Open `mkxp.json` in a text editor
-3. Add this line near the bottom, just before the `"bindingNames"` line:
+2. Copy **both** files from `src/` into the `Scripts/` directory:
+   - `shiny_iv_boost.rb`
+   - `shiny_iv_boost_config.rb`
+3. Open `Scripts/Rejuv/Bootstrap.rb` in a text editor
+4. Find the `'Main',` line near the bottom of the `SCRIPTS` list and add the mod entries just above it:
+   ```ruby
+   # Shiny IV Boost mod - must load after Pokemon.rb
+   'shiny_iv_boost_config',
+   'shiny_iv_boost',
+
+   'Main',
    ```
-   "patches": ["patch"],
-   ```
-4. Create the directory `patch/Mods/`
-5. Copy **both** files from `src/` into `patch/Mods/`:
-   - `shiny_iv_boost.rb` — the mod itself
-   - `shiny_iv_boost_config.rb` — your settings
-6. Launch the game
+5. Launch the game
 
 ## Uninstall
 
-Delete `shiny_iv_boost.rb` and `shiny_iv_boost_config.rb` from `patch/Mods/`. For Rejuvenation, you can also remove the `"patches"` line from `mkxp.json` if you have no other mods.
+**Reborn:** Delete `shiny_iv_boost.rb` and `shiny_iv_boost_config.rb` from `patch/Mods/`.
+
+**Rejuvenation:** Delete both files from `Scripts/` and remove the two `shiny_iv_boost` lines you added to `Scripts/Rejuv/Bootstrap.rb`.
 
 ## Configuration
 
-Edit `shiny_iv_boost_config.rb` in `patch/Mods/` — the mod file itself never needs to be touched.
+Edit `shiny_iv_boost_config.rb` — the mod file itself never needs to be touched.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -56,18 +61,18 @@ Edit `shiny_iv_boost_config.rb` in `patch/Mods/` — the mod file itself never n
 When `DEBUG_LOGGING` is enabled, each shiny generation writes a line to `shiny_iv_boost.log` in your game folder showing the before/after IVs:
 
 ```
-[2026-03-15 14:02:31] Pikachu — before: [4, 12, 28, 3, 17, 9] → after: [22, 18, 28, 14, 24, 15]
+[2026-03-15 14:02:31] SLAKOTH — before: [4, 12, 28, 3, 17, 9] → after: [22, 18, 28, 14, 24, 15]
 ```
 
 If the config file is missing, the mod still works using built-in defaults (same values as above).
 
 ## How it works
 
-The mod uses the MKXP engine's patch system (`patch/Mods/`). It aliases `calcStats` on `PokeBattle_Pokemon` to inject the IV boost on first stat calculation — right after the base game assigns IVs but before stats are finalized. No base game files are modified.
+The mod aliases `calcStats` on `PokeBattle_Pokemon` to inject the IV boost on first stat calculation — right after the base game assigns IVs but before stats are finalized. No base game files are modified (Reborn). For Rejuvenation, the only change is two lines added to `Bootstrap.rb` to register the scripts.
 
 ## Compatibility
 
-- **Pokemon Reborn v19.5.0** — works out of the box
-- **Pokemon Rejuvenation v13.5.0** — works with one-line `mkxp.json` edit (see install steps)
+- **Pokemon Reborn v19.5.0** — works out of the box via `patch/Mods/`
+- **Pokemon Rejuvenation v13.5.0** — works by adding to the script loader
 - Does not break existing save files
 - Minimal conflict risk with other mods (only touches IV generation via `calcStats` alias)
