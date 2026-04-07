@@ -24,9 +24,11 @@ module ShinyIVBoost
   LOG_FILE = "shiny_iv_boost.log"
 
   def self.log(message)
-    return unless DEBUG_LOGGING
     File.open(LOG_FILE, "a") { |f| f.puts("[#{Time.now}] #{message}") }
   end
+
+  # Always log on startup so you can confirm the mod loaded
+  log("Loaded — ENABLED=#{ENABLED} ADVANTAGE_ROLLS=#{ADVANTAGE_ROLLS} MIN_IV_FLOOR=#{MIN_IV_FLOOR} DEBUG_LOGGING=#{DEBUG_LOGGING}")
 
   def self.apply(pokemon)
     return unless ENABLED
@@ -48,7 +50,9 @@ module ShinyIVBoost
       end
     end
 
-    log("#{pokemon.species} — before: #{original_ivs.inspect} → after: #{pokemon.iv.inspect}")
+    if DEBUG_LOGGING
+      log("#{pokemon.species} — before: #{original_ivs.inspect} → after: #{pokemon.iv.inspect}")
+    end
   end
 end
 
